@@ -353,8 +353,10 @@ int GLWebViewState::drawGL(IntRect& invScreenRect, SkRect& visibleContentRect,
     if (ImagesManager::instance()->prepareTextures(this))
         returnFlags |= DrawGlInfo::kStatusDraw;
 
-    if (scale < MIN_SCALE_WARNING || scale > MAX_SCALE_WARNING)
+    if (scale < MIN_SCALE_WARNING || scale > MAX_SCALE_WARNING) {
         ALOGW("WARNING, scale seems corrupted after update: %e", scale);
+        scale = 1.0f; // WORKAROUND for corrupted scale: use 1.0
+    }
 
     double currentTime = setupDrawing(invScreenRect, visibleContentRect, screenRect,
                                       titleBarHeight, screenClip, scale);
