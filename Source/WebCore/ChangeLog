@@ -242,7 +242,6 @@
         * page/ChromeClient.h:
 
 2011-05-11  Antoine Labour  <piman@chromium.org>
-
         Reviewed by David Levin.
 
         Expose shouldBufferData to ThreadableLoaderOptions to be able to disable buffering of the
