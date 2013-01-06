@@ -233,7 +233,7 @@ LOCAL_PATH := $(BASE_PATH)
 
 # Define our compiler flags
 LOCAL_CFLAGS += -Wno-endif-labels -Wno-import -Wno-format
-LOCAL_CFLAGS += -fstrict-aliasing -Werror=strict-aliasing
+LOCAL_CFLAGS += -fno-strict-aliasing
 LOCAL_CFLAGS += -include "WebCorePrefix.h"
 LOCAL_CFLAGS += -fvisibility=hidden
 LOCAL_CFLAGS += -DALWAYS_INLINE=inline

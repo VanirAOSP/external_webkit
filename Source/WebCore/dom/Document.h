@@ -102,7 +102,6 @@ class MediaQueryMatcher;
 class MouseEventWithHitTestResults;
 class NodeFilter;
 class NodeIterator;
-class NodeRareData;
 class Page;
 class PlatformMouseEvent;
 class ProcessingInstruction;
@@ -1105,13 +1104,11 @@ public:
     bool doObjectPrefetch() const { return m_doObjPrfth; }
     bool doJsCssPrefetch() const { return m_doJsCssPrfth; }
 
-    NodeRareData* documentRareData() const { return m_documentRareData; };
-    void setDocumentRareData(NodeRareData* rareData) { m_documentRareData = rareData; }
-
 protected:
     Document(Frame*, const KURL&, bool isXHTML, bool isHTML);
 
     void clearXMLVersion() { m_xmlVersion = String(); }
+
 
 private:
     friend class IgnoreDestructiveWriteCountIncrementer;
@@ -1374,8 +1371,6 @@ private:
     
     RefPtr<EventQueue> m_eventQueue;
 
-    NodeRareData* m_documentRareData;
-
 #if ENABLE(WML)
     bool m_containsWMLContent;
 #endif
@@ -1428,11 +1423,8 @@ inline Node::Node(Document* document, ConstructionType type)
     : m_document(document)
     , m_previous(0)
     , m_next(0)
-    , m_prefetch(0)
     , m_renderer(0)
     , m_nodeFlags(type)
-    , m_previousNode(0)
-    , m_nextNode(0)
 {
     if (m_document)
         m_document->guardRef();

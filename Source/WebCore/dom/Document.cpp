@@ -108,7 +108,6 @@
 #include "NestingLevelIncrementer.h"
 #include "NodeFilter.h"
 #include "NodeIterator.h"
-#include "NodeRareData.h"
 #include "NodeWithIndex.h"
 #include "OverflowEvent.h"
 #include "Page.h"
@@ -427,7 +426,6 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     , m_sawElementsInKnownNamespaces(false)
     , m_usingGeolocation(false)
     , m_eventQueue(EventQueue::create(this))
-    , m_documentRareData(0)
 #if ENABLE(WML)
     , m_containsWMLContent(false)
 #endif
@@ -584,13 +582,6 @@ Document::~Document()
     if (m_implementation)
         m_implementation->ownerDocumentDestroyed();
     m_externalJs = 0;
-
-    if (hasRareData()) {
-        ASSERT(m_documentRareData);
-        delete m_documentRareData;
-        m_documentRareData = 0;
-        clearFlag(HasRareDataFlag);
-    }
 }
 
 void Document::removedLastRef()
@@ -1834,7 +1825,7 @@ void Document::removeAllEventListeners()
 
     if (DOMWindow* domWindow = this->domWindow())
         domWindow->removeAllEventListeners();
-    for (Node* node = firstChild(); node; node = node->traverseNextNodeFastPath())
+    for (Node* node = firstChild(); node; node = node->traverseNextNode())
         node->removeAllEventListeners();
 }
 
@@ -3877,12 +3868,11 @@ static inline bool isValidNameASCII(const UChar* characters, unsigned length)
 
 bool Document::isValidName(const String& name)
 {
-    if (name.isEmpty())
+    unsigned length = name.length();
+    if (!length)
         return false;
 
-    StringImpl* impl = name.impl();
-    const UChar* characters = impl->characters();
-    unsigned length = impl->length();
+    const UChar* characters = name.characters();
     return isValidNameASCII(characters, length) || isValidNameNonASCII(characters, length);
 }
 

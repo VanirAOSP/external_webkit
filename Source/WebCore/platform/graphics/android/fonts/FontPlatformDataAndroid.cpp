@@ -247,9 +247,7 @@ unsigned FontPlatformData::hash() const
         h = SkTypeface::UniqueID(m_typeface);
     }
 
-    uint32_t sizeAsInt;
-    memcpy(&sizeAsInt, &m_textSize, sizeof(const uint32_t));
-    //*reinterpret_cast<const uint32_t*>(&m_textSize);
+    uint32_t sizeAsInt = *reinterpret_cast<const uint32_t*>(&m_textSize);
 
     h ^= 0x01010101 * ((static_cast<int>(m_textOrientation) << 3) | (static_cast<int>(m_orientation) << 2) |
          ((int)m_fakeBold << 1) | (int)m_fakeItalic);
