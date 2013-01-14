@@ -353,19 +353,8 @@ int GLWebViewState::drawGL(IntRect& invScreenRect, SkRect& visibleContentRect,
     if (ImagesManager::instance()->prepareTextures(this))
         returnFlags |= DrawGlInfo::kStatusDraw;
 
-    // WHY YOU WOULD CLAMP THIS TO 1.0f IN BOTH CASES IS BEYOND ME.
-    // LIKE SERIOUSLY... HOW DOES THAT MAKE SENSE?!!?!?!?!?!?!?!!?
-    // *face palm*
-    if (scale < MIN_SCALE_WARNING)
-    {
-        ALOGW("WARNING, NOT ENOUGH MUSTARD!: %e", scale);
-        scale = MIN_SCALE_WARNING;
-    }
-    else if (scale > MAX_SCALE_WARNING)
-    {
-        ALOGW("WARNING, TOO ENOUGH MUSTARD!: %e", scale);
-        scale = MAX_SCALE_WARNING;
-    }
+    if (scale < MIN_SCALE_WARNING || scale > MAX_SCALE_WARNING)
+        ALOGW("WARNING, scale seems corrupted after update: %e", scale);
 
     double currentTime = setupDrawing(invScreenRect, visibleContentRect, screenRect,
                                       titleBarHeight, screenClip, scale);

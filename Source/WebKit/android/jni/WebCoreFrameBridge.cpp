@@ -1143,7 +1143,9 @@ static void CreateFrame(JNIEnv* env, jobject obj, jobject javaview, jobject jAss
     pageClients.contextMenuClient = new ContextMenuClientAndroid;
     pageClients.editorClient = editorC;
     pageClients.dragClient = new DragClientAndroid;
+#if ENABLE(INSPECTOR)
     pageClients.inspectorClient = new InspectorClientAndroid;
+#endif
     pageClients.deviceMotionClient = deviceMotionC;
     pageClients.deviceOrientationClient = deviceOrientationC;
     pageClients.geolocationClient = geolocationC;
