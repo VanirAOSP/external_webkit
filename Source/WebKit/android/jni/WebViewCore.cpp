@@ -1,5 +1,8 @@
 /*
  * Copyright 2006, The Android Open Source Project
+ * Copyright (C) 2011, 2012 The Linux Foundation All rights reserved.
+ * Copyright (C) 2012 Sony Ericsson Mobile Communications AB.
+ * Copyright (C) 2012 Sony Mobile Communications AB
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2575,7 +2578,7 @@ Node* WebViewCore::getNextAnchorNode(Node* anchorNode, bool ignoreFirstNode, int
                 || isContentInputElement(currentNode))
             return currentNode;
         if (direction == DIRECTION_FORWARD)
-            currentNode = currentNode->traverseNextNode();
+            currentNode = currentNode->traverseNextNodeFastPath();
         else
             currentNode = currentNode->traversePreviousNodePostOrder(body);
     }
@@ -2697,7 +2700,7 @@ Node* WebViewCore::getIntermediaryInputElement(Node* fromNode, Node* toNode, int
         while (currentNode && currentNode != toNode) {
             if (isContentInputElement(currentNode))
                 return currentNode;
-            currentNode = currentNode->traverseNextNode();
+            currentNode = currentNode->traverseNextNodeFastPath();
         }
     } else {
         Node* currentNode = fromNode->traversePreviousNode();
@@ -4861,6 +4864,15 @@ static void Pause(JNIEnv* env, jobject obj, jint nativeClass)
 
     WebViewCore* viewImpl = reinterpret_cast<WebViewCore*>(nativeClass);
     Frame* mainFrame = viewImpl->mainFrame();
+
+    for (Frame* frame = mainFrame; frame; frame = frame->tree()->traverseNext()) {
+#if ENABLE(WEBGL)
+        Document* document = frame->document();
+        if (document)
+            document->suspendDocument();
+#endif
+    }
+
     if (mainFrame)
         mainFrame->settings()->setMinDOMTimerInterval(BACKGROUND_TIMER_INTERVAL);
 
@@ -4877,6 +4889,15 @@ static void Resume(JNIEnv* env, jobject obj, jint nativeClass)
 {
     WebViewCore* viewImpl = reinterpret_cast<WebViewCore*>(nativeClass);
     Frame* mainFrame = viewImpl->mainFrame();
+
+    for (Frame* frame = mainFrame; frame; frame = frame->tree()->traverseNext()) {
+#if ENABLE(WEBGL)
+        Document* document = frame->document();
+        if (document)
+            document->resumeDocument();
+#endif
+    }
+
     if (mainFrame)
         mainFrame->settings()->setMinDOMTimerInterval(FOREGROUND_TIMER_INTERVAL);
 
