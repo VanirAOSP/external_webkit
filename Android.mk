@@ -24,6 +24,7 @@
 ##
 
 # Control WebGL compiling in webkit.
+ENABLE_WEBGL = true
 ifneq ($(ENABLE_WEBGL),true)
     ENABLE_WEBGL = false
 endif
