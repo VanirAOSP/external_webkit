@@ -215,6 +215,11 @@ LOCAL_C_INCLUDES := $(LOCAL_C_INCLUDES) \
 
 LOCAL_CFLAGS += -DWEBKIT_IMPLEMENTATION=1
 
+# turn off error debugging for user builds, but leave intact for debug variants
+ifeq ($(TARGET_BUILD_VARIANT),user)
+LOCAL_CFLAGS += -DUSER_VARIANT
+endif
+
 # Needed for ANGLE
 LOCAL_C_INCLUDES := $(LOCAL_C_INCLUDES) \
 	$(SOURCE_PATH)/ThirdParty/ANGLE/include/GLSLANG
