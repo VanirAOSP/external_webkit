@@ -165,15 +165,6 @@ public:
     bool needsInit() { return m_needsInit; }
     bool usePointSampling(float tileScale, const TransformationMatrix* layerTransform);
 
-    //Getters
-    FloatRect& getClipRect()    { return m_clipRect;    }
-    int& getTitleBarHeight()    { return m_titleBarHeight;  }
-
-    FloatRect& getContentViewport() {   return m_contentViewport; }
-    TransformationMatrix& getSurfaceProjectionMatrix() { return m_surfaceProjectionMatrix; }
-    TransformationMatrix& getClipProjectionMatrix()     { return m_clipProjectionMatrix;    }
-    TransformationMatrix& getVisibleContentRectProjectionMatrix() { return m_visibleContentRectProjectionMatrix; }
-
 private:
     GLuint loadShader(GLenum shaderType, const char* pSource);
     GLint createProgram(const char* vertexSource, const char* fragmentSource);

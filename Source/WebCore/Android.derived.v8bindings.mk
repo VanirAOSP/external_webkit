@@ -1,7 +1,5 @@
 ##
 ## Copyright 2009, The Android Open Source Project
-## Copyright (C) 2011 Sony Ericsson Mobile Communications AB
-## Copyright (C) 2012 Sony Mobile Communications AB
 ##
 ## Redistribution and use in source and binary forms, with or without
 ## modification, are permitted provided that the following conditions
@@ -37,15 +35,9 @@ FEATURE_DEFINES := ENABLE_ORIENTATION_EVENTS=1 ENABLE_TOUCH_EVENTS=1 ENABLE_DATA
 # The defines above should be identical to those for JSC.
 FEATURE_DEFINES += V8_BINDING
 
-ifeq ($(DYNAMIC_SHARED_LIBV8SO), true)
-FEATURE_DEFINES += ENABLE_WORKERS=1 ENABLE_SHARED_WORKERS=1
-endif
-
 ifeq ($(ENABLE_SVG), true)
     FEATURE_DEFINES += ENABLE_SVG=1
 endif
-
-FEATURE_DEFINES += ENABLE_REQUEST_ANIMATION_FRAME
 
 # CSS
 GEN := \
@@ -133,7 +125,6 @@ GEN := \
     $(intermediates)/bindings/V8ProgressEvent.h \
     $(intermediates)/bindings/V8Range.h \
     $(intermediates)/bindings/V8RangeException.h \
-    $(intermediates)/bindings/V8RequestAnimationFrameCallback.h \
     $(intermediates)/bindings/V8Text.h \
     $(intermediates)/bindings/V8TextEvent.h \
     $(intermediates)/bindings/V8Touch.h \
@@ -317,7 +308,6 @@ GEN := \
     $(intermediates)/bindings/V8OESTextureFloat.h \
     $(intermediates)/bindings/V8OESVertexArrayObject.h \
     $(intermediates)/bindings/V8Uint8Array.h \
-    $(intermediates)/bindings/V8Uint8ClampedArray.h \
     $(intermediates)/bindings/V8Uint16Array.h \
     $(intermediates)/bindings/V8Uint32Array.h \
     $(intermediates)/bindings/V8WebGLActiveInfo.h \
@@ -331,13 +321,6 @@ GEN := \
     $(intermediates)/bindings/V8WebGLTexture.h \
     $(intermediates)/bindings/V8WebGLUniformLocation.h \
     $(intermediates)/bindings/V8WebGLVertexArrayObjectOES.h
-
-ifeq ($(ENABLE_WEBGL), true)
-GEN += \
-    $(intermediates)/bindings/V8OESStandardDerivatives.h \
-    $(intermediates)/bindings/V8WebGLContextEvent.h \
-    $(intermediates)/bindings/V8WebKitLoseContext.h
-endif
 
 $(GEN): PRIVATE_PATH := $(LOCAL_PATH)
 $(GEN): PRIVATE_CUSTOM_TOOL = SOURCE_ROOT=$(PRIVATE_PATH) perl -I$(PRIVATE_PATH)/bindings/scripts $(PRIVATE_PATH)/bindings/scripts/generate-bindings.pl --defines "$(FEATURE_DEFINES) LANGUAGE_JAVASCRIPT" --generator V8 --include dom --include html --include html/canvas --outputdir $(dir $@) $<
