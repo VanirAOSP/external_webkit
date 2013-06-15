@@ -1,8 +1,5 @@
 /*
  * Copyright 2006, The Android Open Source Project
- * Copyright (C) 2011, 2012 The Linux Foundation All rights reserved.
- * Copyright (C) 2012 Sony Ericsson Mobile Communications AB.
- * Copyright (C) 2012 Sony Mobile Communications AB
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -129,7 +126,6 @@
 #include "TextIterator.h"
 #include "TilesManager.h"
 #include "TypingCommand.h"
-#include "V8Binding.h"
 #include "WebCache.h"
 #include "WebCoreFrameBridge.h"
 #include "WebCoreJni.h"
@@ -549,7 +545,7 @@ WebViewCore::WebViewCore(JNIEnv* env, jobject javaWebViewCore, WebCore::Frame* m
     // libwebcore gets loaded. We now need to associate the WebCore thread with V8 to complete
     // initialisation.
     v8::V8::Initialize();
-    WebCore::V8BindingPerIsolateData::ensureInitialized(v8::Isolate::GetCurrent());
+
     // Configure any RuntimeEnabled features that we need to change from their default now.
     // See WebCore/bindings/generic/RuntimeEnabledFeatures.h
 
@@ -2579,7 +2575,7 @@ Node* WebViewCore::getNextAnchorNode(Node* anchorNode, bool ignoreFirstNode, int
                 || isContentInputElement(currentNode))
             return currentNode;
         if (direction == DIRECTION_FORWARD)
-            currentNode = currentNode->traverseNextNodeFastPath();
+            currentNode = currentNode->traverseNextNode();
         else
             currentNode = currentNode->traversePreviousNodePostOrder(body);
     }
@@ -2701,7 +2697,7 @@ Node* WebViewCore::getIntermediaryInputElement(Node* fromNode, Node* toNode, int
         while (currentNode && currentNode != toNode) {
             if (isContentInputElement(currentNode))
                 return currentNode;
-            currentNode = currentNode->traverseNextNodeFastPath();
+            currentNode = currentNode->traverseNextNode();
         }
     } else {
         Node* currentNode = fromNode->traversePreviousNode();
@@ -4872,15 +4868,6 @@ static void Pause(JNIEnv* env, jobject obj, jint nativeClass)
 
     WebViewCore* viewImpl = reinterpret_cast<WebViewCore*>(nativeClass);
     Frame* mainFrame = viewImpl->mainFrame();
-
-    for (Frame* frame = mainFrame; frame; frame = frame->tree()->traverseNext()) {
-#if ENABLE(WEBGL)
-        Document* document = frame->document();
-        if (document)
-            document->suspendDocument();
-#endif
-    }
-
     if (mainFrame)
         mainFrame->settings()->setMinDOMTimerInterval(BACKGROUND_TIMER_INTERVAL);
 
@@ -4898,15 +4885,6 @@ static void Resume(JNIEnv* env, jobject obj, jint nativeClass)
 {
     WebViewCore* viewImpl = reinterpret_cast<WebViewCore*>(nativeClass);
     Frame* mainFrame = viewImpl->mainFrame();
-
-    for (Frame* frame = mainFrame; frame; frame = frame->tree()->traverseNext()) {
-#if ENABLE(WEBGL)
-        Document* document = frame->document();
-        if (document)
-            document->resumeDocument();
-#endif
-    }
-
     if (mainFrame)
         mainFrame->settings()->setMinDOMTimerInterval(FOREGROUND_TIMER_INTERVAL);
 

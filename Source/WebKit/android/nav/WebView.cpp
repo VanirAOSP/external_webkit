@@ -58,7 +58,6 @@
 #include "WebCoreJni.h"
 #include "WebRequestContext.h"
 #include "WebViewCore.h"
-#include "HTMLCanvasElement.h"
 
 #ifdef GET_NATIVE_VIEW
 #undef GET_NATIVE_VIEW
