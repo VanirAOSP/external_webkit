@@ -289,6 +289,7 @@ jobject WebViewCore::getApplicationContext() {
     return result;
 }
 
+
 struct WebViewCoreStaticMethods {
     jmethodID    m_isSupportedMediaMimeType;
 } gWebViewCoreStaticMethods;
@@ -439,7 +440,6 @@ WebViewCore::WebViewCore(JNIEnv* env, jobject javaWebViewCore, WebCore::Frame* m
     , m_textWrapWidth(320)
     , m_scale(1.0f)
     , m_groupForVisitedLinks(0)
-    , m_isContentDrawPaused(false)
     , m_cacheMode(0)
     , m_fullscreenVideoMode(false)
     , m_matchCount(0)
@@ -977,7 +977,7 @@ void WebViewCore::contentInvalidate(const WebCore::IntRect &r)
     IntRect dirty = r;
     dirty.move(-origin.x(), -origin.y());
     m_content.invalidate(dirty);
-    if (!m_skipContentDraw && !m_isContentDrawPaused)
+    if (!m_skipContentDraw)
         contentDraw();
 }
 
@@ -4902,13 +4902,6 @@ static void RegisterURLSchemeAsLocal(JNIEnv* env, jobject obj, jint nativeClass,
     WebCore::SchemeRegistry::registerURLSchemeAsLocal(jstringToWtfString(env, scheme));
 }
 
-void WebViewCore::setIsContentDrawPaused(bool isPaused) {
-    m_isContentDrawPaused = isPaused;
-
-    if (!m_skipContentDraw && !m_isContentDrawPaused)
-        contentDraw();
-}
-
 static void Pause(JNIEnv* env, jobject obj, jint nativeClass)
 {
     // This is called for the foreground tab when the browser is put to the
@@ -4969,7 +4962,6 @@ static void Resume(JNIEnv* env, jobject obj, jint nativeClass)
     SkANP::InitEvent(&event, kLifecycle_ANPEventType);
     event.data.lifecycle.action = kResume_ANPLifecycleAction;
     viewImpl->sendPluginEvent(event);
-    viewImpl->setIsContentDrawPaused(false);
 #if ENABLE(WEB_AUDIO)
     viewImpl->resumeAudioDestinations();
 #endif
