@@ -904,7 +904,9 @@ bool RenderLayerBacking::containsPaintedContent() const
     if (isAcceleratedCanvas(renderer()))
         return hasBoxDecorationsOrBackground(renderer());
 #endif
-
+    if (renderer()->isCanvas()) {
+       m_graphicsLayer->setNeedsDisplay();
+    }
     return true;
 }
 
